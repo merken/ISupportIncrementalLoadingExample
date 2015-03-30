@@ -6,7 +6,6 @@ namespace ISupportIncrementalLoadingExample.Util
 {
     public static class ControlHelper
     {
-
         public static Page GetParentPage(FrameworkElement elem)
         {
             var parent = elem.Parent;
