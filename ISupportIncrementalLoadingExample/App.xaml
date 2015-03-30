@@ -1,0 +1,10 @@
+<Application x:Class="ISupportIncrementalLoadingExample.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converter="using:ISupportIncrementalLoadingExample.Converters"
+             xmlns:local="using:ISupportIncrementalLoadingExample">
+    <Application.Resources>
+        <vm:ViewModelLocator xmlns:vm="using:ISupportIncrementalLoadingExample.ViewModel" x:Key="Locator" />
+        <converter:BoolToVisibilityConverter x:Key="localBoolToVisibilityConverter" />
+    </Application.Resources>
+</Application>

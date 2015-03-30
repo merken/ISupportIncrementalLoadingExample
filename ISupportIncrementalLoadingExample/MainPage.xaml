@@ -1,0 +1,168 @@
+﻿<Page x:Class="ISupportIncrementalLoadingExample.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:local="using:ISupportIncrementalLoadingExample"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:selectors="using:ISupportIncrementalLoadingExample.Selectors"
+      xmlns:behaviors="using:ISupportIncrementalLoadingExample.Behaviors"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      DataContext="{Binding Main,
+                            Source={StaticResource Locator}}"
+      mc:Ignorable="d">
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Command="{Binding ClearCommand}"
+                          Icon="Delete"
+                          IsCompact="True"
+                          Label="Clear" />
+            <AppBarButton Command="{Binding AboutCommand}"
+                          Icon="Help"
+                          IsCompact="True"
+                          Label="About" />
+        </CommandBar>
+    </Page.BottomAppBar>
+    <Page.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="FoosItemTemplate">
+                <Grid Margin="0,0,0,12"
+                      Background="Transparent"
+                      CommonNavigationTransitionInfo.IsStaggerElement="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center"
+                               CommonNavigationTransitionInfo.IsStaggerElement="True"
+                               FontFamily="Segoe WP"
+                               FontSize="50"
+                               FontWeight="SemiLight"
+                               Pivot.SlideInAnimationGroup="2"
+                               Text="{Binding Name}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap" />
+
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="FoosFooterItemTemplate">
+                <StackPanel>
+                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource FoosItemTemplate}" />
+                    <TextBlock Margin="0,0,0,10"
+                               FontFamily="Segoe WP SemiLight"
+                               FontSize="26"
+                               FontWeight="SemiLight"
+                               Text="No more foooooos"
+                               TextWrapping="WrapWholeWords" />
+                </StackPanel>
+            </DataTemplate>
+            <selectors:FooterTemplateSelector x:Key="foosFooterTemplateSelector"
+                                              FooterTemplate="{StaticResource FoosFooterItemTemplate}"
+                                              Template="{StaticResource FoosItemTemplate}" />
+            <DataTemplate x:Key="GroupedFoosItemTemplate">
+                <Grid Margin="0,0,0,24"
+                      Background="Transparent"
+                      CommonNavigationTransitionInfo.IsStaggerElement="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0"
+                               VerticalAlignment="Center"
+                               CommonNavigationTransitionInfo.IsStaggerElement="True"
+                               FontFamily="Segoe WP"
+                               FontSize="22"
+                               FontWeight="Normal"
+                               Pivot.SlideInAnimationGroup="2"
+                               Text="{Binding Key}"
+                               TextTrimming="CharacterEllipsis" />
+
+                    <ListView Grid.Row="1"
+                              IsItemClickEnabled="True"
+                              ItemTemplate="{StaticResource FoosItemTemplate}"
+                              ItemsSource="{Binding Items}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </Grid>
+            </DataTemplate>
+            <Style x:Key="VirtualizingListViewStyle" TargetType="ListView">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Page.Resources>
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Pivot Title="ISUCKATINCREMENTALLOADING" Grid.Row="0">
+            <PivotItem Header="foos">
+                <ListView ItemTemplateSelector="{StaticResource foosFooterTemplateSelector}"
+                          ItemsSource="{Binding Foos}"
+                          Style="{StaticResource VirtualizingListViewStyle}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:ListViewScrollViewerBehavior Scrollable="{Binding Foos, Mode=TwoWay}" />
+                    </i:Interaction.Behaviors>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </PivotItem>
+            <PivotItem Header="grouped foos">
+                <ListView ItemTemplate="{StaticResource GroupedFoosItemTemplate}" ItemsSource="{Binding GroupedFoos}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Footer>
+                        <TextBlock Margin="0,0,0,10"
+                                   FontFamily="Segoe WP SemiLight"
+                                   FontSize="26"
+                                   FontWeight="SemiLight"
+                                   Text="No more grouped foos"
+                                   TextWrapping="WrapWholeWords"
+                                   Visibility="{Binding NoMoreGroupedFoos,
+                                                        Converter={StaticResource localBoolToVisibilityConverter}}" />
+                    </ListView.Footer>
+                </ListView>
+            </PivotItem>
+            <PivotItem Header="scrollable">
+                <ListView ItemTemplateSelector="{StaticResource foosFooterTemplateSelector}"
+                          ItemsSource="{Binding ScrollableFoos}"
+                          Style="{StaticResource VirtualizingListViewStyle}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:ListViewScrollViewerBehavior Scrollable="{Binding ScrollableFoos, Mode=TwoWay}" />
+                    </i:Interaction.Behaviors>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </PivotItem>
+        </Pivot>
+        <ProgressRing Grid.Row="1"
+                      IsActive="True"
+                      Visibility="{Binding IsLoading,
+                                           Converter={StaticResource localBoolToVisibilityConverter}}" />
+    </Grid>
+</Page>

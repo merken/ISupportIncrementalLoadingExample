@@ -1,0 +1,16 @@
+﻿<Page
+    x:Class="ISupportIncrementalLoadingExample.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ISupportIncrementalLoadingExample"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    DataContext="{Binding About,
+                            Source={StaticResource Locator}}">
+
+    <Grid>
+        <TextBlock Text="This is the about page, navigate back to discover that the scrolled verticaloffset has been preserved!"/>
+    </Grid>
+</Page>
